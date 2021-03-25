@@ -73,6 +73,34 @@ void improvedQuickSort(int* arr, int first, int last)
     }
 }
 
+void bucketSortEvenNumbers(int* arr, int len) {
+    const int max = len;
+    const int b = 10;
+    const int digits = 1000000000;
+
+    int buckets[b][max + 1];
+    for (int i = 0; i < b; ++i) {
+        buckets[i][max] = 0;
+    }
+
+    for (int digit = 1; digit < digits; digit *= 10) {
+        for (int i = 0; i < max; ++i) {
+            if (arr[i] % 2 == 0) {
+                int d = (arr[i] / digit) % b;
+                buckets[d][buckets[d][max]++] = arr[i];
+                arr[i] = -1;
+            }
+        }
+        int idx = 0;
+        for (int i = 0; i < b; ++i) {
+            for (int j = 0; j < buckets[i][max]; ++j) {
+                while (arr[idx] != -1) idx++;
+                arr[idx] = buckets[i][j];
+            }
+            buckets[i][max] = 0;
+        }
+    }
+}
 
 int main(int argc, const char** argv)
 {
@@ -84,6 +112,12 @@ int main(int argc, const char** argv)
     improvedQuickSort(arr1, 0, SIZE - 1);
     printArray(arr1, SIZE);
     printf("\n");
+
+    int arr2[SIZE];
+    fillArray(arr2, SIZE, 100);
+    printArray(arr2, SIZE);
+    bucketSortEvenNumbers(arr2, SIZE);
+    printArray(arr2, SIZE);
 
     return 0;
 }
